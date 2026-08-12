@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SlackToGitHubWebhookPayload",
+  "description": "Payload required to commit extracted Slack meeting notes directly to GitHub.",
+  "type": "object",
+  "properties": {
+    "file_path": {
+      "type": "string",
+      "description": "Target repository file path.",
+      "examples": ["notes/2026-08-12-meeting.md"]
+    },
+    "file_content": {
+      "type": "string",
+      "description": "Clean Markdown text produced from Slack AI processing.",
+      "examples": ["- [ ] @oliverwarlick Test regex parser"]
+    },
+    "commit_message": {
+      "type": "string",
+      "description": "Standardized Git commit message.",
+      "examples": ["docs: add meeting notes 2026-08-12"]
+    }
+  },
+  "required": ["file_path", "file_content", "commit_message"],
+  "additionalProperties": false
+}
