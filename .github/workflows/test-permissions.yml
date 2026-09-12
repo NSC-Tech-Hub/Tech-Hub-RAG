@@ -1,0 +1,23 @@
+name: Test Issue Permissions
+
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  verify-token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Token Access
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -n "$GITHUB_TOKEN" ]; then
+            echo "GITHUB_TOKEN is successfully set and accessible."
+          else
+            echo "Error: GITHUB_TOKEN is missing."
+            exit 1
+          fi
