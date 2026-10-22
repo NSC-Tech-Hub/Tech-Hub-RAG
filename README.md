@@ -32,3 +32,10 @@ flowchart LR
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) before contributing to this project.
+
+
+## Project Visual Diagram
+
+The following diagram provides a visual overview of the Tech Hub RAG workflow, showing how Slack meeting conversations move through AI processing and structured task extraction to GitHub issue creation and team collaboration.
+
+![Tech Hub RAG System Workflow](docs/diagrams/tech-hub-rag-workflow.png)
