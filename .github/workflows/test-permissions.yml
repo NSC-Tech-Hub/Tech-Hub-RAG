@@ -1,0 +1,31 @@
+name: Test Issue Permissions
+
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  verify-token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Token Access
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          issue_number=""
+          cleanup() {
+            if [ -n "$issue_number" ]; then
+              gh api --fail --method PATCH "/repos/${GITHUB_REPOSITORY}/issues/${issue_number}" -f state=closed >/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
+          gh api --fail "/repos/${GITHUB_REPOSITORY}/issues?per_page=1" >/dev/null
+          issue_number="$(gh api --fail --method POST "/repos/${GITHUB_REPOSITORY}/issues" \
+            -f title="GITHUB_TOKEN permission check" \
+            -f body="Temporary issue created by the permission-check workflow." \
+            --jq '.number')"
+          echo "GITHUB_TOKEN read and write access verified."
