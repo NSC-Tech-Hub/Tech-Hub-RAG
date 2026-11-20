@@ -1,0 +1,41 @@
+name: Process meeting notes
+
+on:
+  push:
+    paths:
+      - 'meeting-notes/*.md'
+
+permissions:
+  contents: read
+
+jobs:
+  process-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Process changed notes
+        shell: bash
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          base="$BEFORE_SHA"
+          if [[ "$base" == 0000000000000000000000000000000000000000 ]]; then
+            base=$(git merge-base "origin/$DEFAULT_BRANCH" "$GITHUB_SHA")
+          fi
+
+          git diff --name-only --diff-filter=ACMR -z "$base" "$GITHUB_SHA" \
+            -- ':(glob)meeting-notes/*.md' |
+          while IFS= read -r -d '' note; do
+            python parse_notes.py "$note"
+          done

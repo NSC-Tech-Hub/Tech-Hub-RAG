@@ -1,12 +1,13 @@
+import argparse
 import re
+from pathlib import Path
 
-file_path = "prototype_notes.md"
+parser = argparse.ArgumentParser(description="Extract tasks from meeting notes.")
+parser.add_argument("notes_file", nargs="?", default="prototype_notes.md", type=Path)
+args = parser.parse_args()
 
-with open(file_path, "r", encoding="utf-8") as f:
-    content = f.read()
-
+content = args.notes_file.read_text(encoding="utf-8-sig")
 pattern = r"- \[ \] @(\S+) (.+)"
-matches = re.findall(pattern, content)
 
-for assignee, task in matches:
+for assignee, task in re.findall(pattern, content):
     print(f"Assignee: {assignee} | Task: {task}")
